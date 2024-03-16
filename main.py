@@ -5,7 +5,10 @@ from pyrogram import filters
 from pyrogram.types import Message
 from gtts import gTTS
 from io import BytesIO
+from langdetect import detect
 import tempfile
+import os
+
 
 class GoogleTTSModule(BaseModule):
     @command("tts")
@@ -19,16 +22,23 @@ class GoogleTTSModule(BaseModule):
             return
 
         print(f"Input text: {text}")
-        tts = gTTS(text=text, lang='en')
+        
+        lang = detect(text)
+        tts = gTTS(text=text, lang=lang)
         speech_bytes = BytesIO()
         tts.write_to_fp(speech_bytes)
         speech_bytes.seek(0)
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp:
-            temp_filename = temp.name
-            temp.write(speech_bytes.read())
+        temp_filename = None
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp:
+                temp_filename = temp.name
+                temp.write(speech_bytes.read())
 
-        await message.reply_voice(voice=temp_filename)
+            await message.reply_voice(voice=temp_filename)
+        finally:
+            if temp_filename and os.path.exists(temp_filename):
+                os.remove(temp_filename)
 
     async def get_text_from_message(self, message):
         """Extract text from the message or the replied message"""
