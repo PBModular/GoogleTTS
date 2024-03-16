@@ -1,0 +1,7 @@
+info:
+  name: GoogleTTS
+  author: Ultra119
+  version: 1.0
+  description: Convert text to speech
+  src_url: https://github.com/PBModular/GoogleTTS
+  python: 3.11
