@@ -20,15 +20,17 @@ class GoogleTTSModule(BaseModule):
         if not text:
             await message.reply(self.S["no_text"])
             return
-
-        print(f"Input text: {text}")
         
-        lang = detect(text)
-        tts = gTTS(text=text, lang=lang)
-        speech_bytes = BytesIO()
-        tts.write_to_fp(speech_bytes)
-        speech_bytes.seek(0)
-
+        try:
+            lang = detect(text)
+            tts = gTTS(text=text, lang=lang)
+            speech_bytes = BytesIO()
+            tts.write_to_fp(speech_bytes)
+            speech_bytes.seek(0)
+        except ValueError:
+            await message.reply(self.S["no_lang"].format(lang=lang))
+            return
+        
         temp_filename = None
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp:
