@@ -1,2 +1,2 @@
 no_text: Please provide some text to convert to speech.
-no_lang: Language "{lang}"" not supported by Google TTS.
+no_lang: Language <code>{lang}</code> not supported by Google TTS.
